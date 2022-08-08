@@ -46,7 +46,7 @@ class _Product {
 	}
 
 	public function details($id) {
-		$this->db->query('SELECT `p`.*, `s_country`, `s_currency` FROM `product` `p` JOIN `seller` `s` ON (`p`.`p_sellerstamp` = `s`.`id`) WHERE `p`.`id` = :id');
+		$this->db->query('SELECT `p`.*, `s_country`, (SELECT `currency_symbol` FROM `sys_country` WHERE `currency` = `s_currency`) `currency_symbol` FROM `product` `p` JOIN `seller` `s` ON (`p`.`p_sellerstamp` = `s`.`id`) WHERE `p`.`id` = :id');
 		$this->db->bind(':id', $id, $this->db->PARAM_INT);
 		return $this->db->single();
 	}
