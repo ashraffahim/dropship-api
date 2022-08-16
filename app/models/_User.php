@@ -160,8 +160,15 @@ class _User {
 
 		$d = $this->db->single();
 
+		$p = DATADIR.DS.'buyer'.DS.$d->id.DS.'p.jpg';
+		if (file_exists($p)) {
+			$d->p = DATA.'/buyer/'.$d->id.'/p.jpg';
+		} else {
+			$d->p = null;
+		}
+
 		return [
-			'status' => isset($d->id) ? 1 : 0,
+			'status' => isset($d->id) ? true : false,
 			'data' => $d
 		];
 	}

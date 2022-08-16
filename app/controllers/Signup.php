@@ -51,7 +51,7 @@ class Signup extends Controller {
 
 		$data['country'] = $country->codeNameList();
 
-		$this->view('user/signup', $data, false);
+		$this->return('user/signup', $data, false);
 	}
 
 	public function clearTmp() {

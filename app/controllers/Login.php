@@ -14,7 +14,7 @@ class Login extends Controller {
 	}
 
 	public function index() {
-		$data = ['status' => null];
+		$data = ['status' => false, 'data' => null];
 		if ($this->RMisPost()) {
 			$this->sanitizeInputPost();
 
@@ -24,12 +24,10 @@ class Login extends Controller {
 				
 				$_SESSION['u'] = $data['data'];
 				
-				$redir = isset($_GET['redir']) ? $_GET['redir'] : '/';
-				redir($redir);
 			}
 		}
 
-		$this->view('user/login', $data, false);
+		$this->return($data);
 	}
 
 }
