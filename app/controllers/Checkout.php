@@ -13,41 +13,37 @@ class Checkout extends Controller {
 		$this->c = new _Checkout();
 	}
 
-	public function index() {
-		$this->view('checkout/index', [
-			'title' => '',
-			'description' => '',
-			'canonical' => '',
-			'meta' => '<meta name="robots" content="noindex">',
-			'schema' => ''
-		]);
-	}
-
 	public function success($id = false) {
 		$this->sanitizeInputGet();
 		$data = $this->c->success($id, $this->get('payment_intent_client_secret', ''));
-
-		$this->view('checkout/success', [
+		$data_param = [
 			'title' => '',
 			'description' => '',
 			'canonical' => '',
 			'meta' => '<meta name="robots" content="noindex">',
 			'schema' => '',
-			'data' => $data
-		]);
+			'data' => $data_param
+		];
+
+		include '../app/views/inc/header.php';
+		require_once '../app/views/checkout/success.php';
+		include '../app/views/inc/footer.php';
 	}
 
 	public function pay($m = false, $id = false) {
 		$am = $this->availMethod();
 
 		if (!in_array($m, $am)) {
-			$this->view('checkout/method', [
+			$data = [
 				'title' => '',
 				'description' => '',
 				'canonical' => '',
 				'meta' => '<meta name="robots" content="noindex">',
 				'schema' => ''
-			]);
+			];
+			include '../app/views/inc/header.php';
+			require_once '../app/views/checkout/method.php';
+			include '../app/views/inc/footer.php';
 			return;
 		}
 
@@ -78,26 +74,16 @@ class Checkout extends Controller {
 					$this->stripe($id, $cur, number_format($a, 2, '', ''));
 				}
 				
-				$this->view('checkout/stripe', [
+				$data = [
 					'title' => '',
 					'description' => '',
 					'canonical' => '',
 					'meta' => '<meta name="robots" content="noindex">',
 					'schema' => ''
-				]);
-
-				break;
-			
-			case 'bkash':
-
-				$this->view('checkout/bkash', [
-					'title' => '',
-					'description' => '',
-					'canonical' => '',
-					'meta' => '<meta name="robots" content="noindex">',
-					'schema' => ''
-				]);
-
+				];
+				include '../app/views/inc/header.php';
+				require_once '../app/views/checkout/stripe.php';
+				include '../app/views/inc/footer.php';
 				break;
 		}
 	}
@@ -116,15 +102,11 @@ class Checkout extends Controller {
 		if ($this->RMisPost()) {
 			$this->sanitizeInputPost();
 			$data = $this->c->order($_POST);
-			$this->status($data);
+			$this->return($data);
 		}
 	}
 
 	private function amount($id) {
-		// Replace this constant with a calculation of the order's amount
-		// Calculate the order total on the server to prevent
-		// people from directly manipulating the amount on the client
-		
 		return $this->c->orderPayable($id);
 	}
 

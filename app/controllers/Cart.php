@@ -37,6 +37,13 @@ class Cart extends Controller {
 			$this->status($data);
 		}
 	}
+
+	public function serviceCharge() {
+		$this->return([
+			'status' => 0,
+			'data' => $this->c->serviceCharge()
+		]);
+	}
 }
 
 ?>

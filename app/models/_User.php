@@ -15,29 +15,28 @@ class _User {
 	public function exist($e) {
 		$this->db->query('SELECT `id` FROM `buyer` WHERE `b_email` = :e');
 		$this->db->bind(':e', $e, $this->db->PARAM_STR);
-		return $this->db->single();
+		
+		$data = $this->db->single();
+
+		if (isset($data->id)) {
+			return [
+				'status' => 0,
+				'data' => $data
+			];
+		}
+		return ['status' => 1];
 	}
 
 	public function setTmp($d) {
-		if (isset($this->exist($d['email'])->id)) {
+		if ($this->exist($d['email'])['status'] == 0) {
 			return [
-				'status' => 0,
-				'cardTag' => [
-					'type' => 'warning',
-					'icon' => 'exclamation-triangle',
-					'body' => '<b>Email already registered!</b> Try <a href="/login">Log in</a>'
-				]
+				'status' => 1
 			];
 		}
 
 		if (isset($_SESSION['tmp_em'])) {
 			return [
-				'status' => 0,
-				'cardTag' => [
-					'type' => 'warning',
-					'icon' => 'exclamation-triangle',
-					'body' => '<b>Email is being processed</b>'
-				]
+				'status' => 2
 			];
 		}
 
@@ -48,7 +47,7 @@ class _User {
 		$_SESSION['tmp_c'] = $d['country'];
 
 		return [
-			'status' => 1
+			'status' => 0
 		];
 	}
 
@@ -82,23 +81,13 @@ class _User {
 				$this->emailVCode();
 
 				return [
-					'status' => 0,
-					'cardTag' => [
-						'type' => 'danger',
-						'icon' => 'exclamation-triangle',
-						'body' => '<b>Too many attempts!</b> New code sent to your email.'
-					]
+					'status' => 1
 				];
 			}
 
 			// Failed attempt
 			return [
-				'status' => 0,
-				'cardTag' => [
-					'type' => 'danger',
-					'icon' => 'exclamation-triangle',
-					'body' => '<b>Wrong verification code!</b> ' . (3 - $_SESSION['atmp']) . ' attempts left'
-				]
+				'status' => 2
 			];
 		}
 	}
@@ -137,7 +126,7 @@ class _User {
 		$this->db->execute();
 
 		return [
-			'status' => 1
+			'status' => 0
 		];
 	}
 
@@ -168,7 +157,7 @@ class _User {
 		}
 
 		return [
-			'status' => isset($d->id) ? true : false,
+			'status' => isset($d->id) ? 0 : 1,
 			'data' => $d
 		];
 	}

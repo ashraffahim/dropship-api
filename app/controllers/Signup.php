@@ -23,7 +23,7 @@ class Signup extends Controller {
 			// Temp info collector
 			if (isset($_POST['email'])) {
 				$data = $this->u->setTmp($_POST);
-				if ($data['status']) {
+				if ($data['status'] == 0) {
 					$VCode = $this->u->createVCode();
 					$this->u->emailVCode($VCode);
 				}
@@ -33,7 +33,7 @@ class Signup extends Controller {
 			if (isset($_POST['vcode'])) {
 				$data = $this->u->verifyEmail($_POST['vcode']);
 
-				if ($data['status'] == 1) {
+				if ($data['status'] == 0) {
 
 					$auth = $this->u->login($_SESSION['tmp_em'], $_SESSION['tmp_pw']);
 
@@ -41,17 +41,26 @@ class Signup extends Controller {
 						$_SESSION['u'] = $auth['data'];
 					}
 
-					$this->clearTmp();
+					$data = $auth;
+					
+					// Clear temp data
+					unset($_SESSION['tmp_fn']);
+					unset($_SESSION['tmp_ln']);
+					unset($_SESSION['tmp_em']);
+					unset($_SESSION['tmp_pw']);
+					unset($_SESSION['tmp_c']);
+					unset($_SESSION['atmp']);
+					unset($_SESSION['vcode']);
 				}
 			}
 		}
 
-		// Load country list csv
-		$country = new Country();
+		$this->return($data);
+	}
 
-		$data['country'] = $country->codeNameList();
-
-		$this->return('user/signup', $data, false);
+	public function resend() {
+		$this->u->emailVCode($_SESSION['vcode']);
+		$this->return(['status' => 0]);
 	}
 
 	public function clearTmp() {
@@ -62,8 +71,8 @@ class Signup extends Controller {
 		unset($_SESSION['tmp_c']);
 		unset($_SESSION['atmp']);
 		unset($_SESSION['vcode']);
-		
-		redir('/signup');
+
+		$this->return(['status' => 0]);
 	}
 
 }

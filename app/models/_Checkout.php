@@ -126,7 +126,7 @@ class _Checkout {
 
 	public function order($d) {
 
-		$ids = implode(',', $d['item']);
+		$ids = $d['items'];
 
 		if (!preg_match('/^[0-9,]+$/', $ids)) {
 			exit;
@@ -136,7 +136,7 @@ class _Checkout {
 		// Limit items to of one currency
 		// 
 
-		if (isset($d['c'])) {
+		if (isset($d['c']) && $d['c'] != '') {
 			
 			// When one currency of item IS chosen
 			// Verify currency
@@ -190,7 +190,8 @@ class _Checkout {
 
 		$this->db->query('
 			SELECT 
-				`id` 
+				`id`,
+				`p_price`  
 			FROM 
 				`product` 
 			WHERE 
@@ -206,17 +207,8 @@ class _Checkout {
 		');
 
 
-		// Isolating ids
-		$isidsarr = [];
+		// Isolating ids with one currency
 		$isids = $this->db->result();
-		
-		foreach ($isids as $p) {
-			$isidsarr[] = $p->id;
-		}
-
-		// Isolated ids with one currency
-
-		$ids = implode(',', $isidsarr);
 
 
 		// 
@@ -225,16 +217,13 @@ class _Checkout {
 		// Order id foreign key is later bound after `Order` insertion 
 		// 
 
-		$this->db->query('SELECT `id`, `p_price` FROM `product` WHERE `id` IN (' . $ids . ')');
-		$o = $this->db->result();
-
 		$vp = '';
 		$vs = [];
 
 		// Calc variables
 		$ta = 0;
 
-		foreach ($o as $i => $p) {
+		foreach ($isids as $i => $p) {
 			$vp .= ($i > 0 ? ',' : '') . '(
 				i,
 				?,
@@ -247,8 +236,9 @@ class _Checkout {
 			$vs[] = $p->p_price;
 
 			$ta += ((int)$d['qty_' . $p->id] * $p->p_price);
-		}
 
+		}
+		
 		// Service cahrge calc
 		$sf = $ta * $this->serviceCharge();
 
@@ -310,7 +300,7 @@ class _Checkout {
 
 			if (!$this->db->execute()) {
 				return [
-					'status' => 0,
+					'status' => 1,
 					'id' => $po->id
 				];
 			}
@@ -328,7 +318,7 @@ class _Checkout {
 
 			if (!$this->db->execute()) {
 				return [
-					'status' => 0,
+					'status' => 2,
 					'id' => $po->id
 				];
 			}
@@ -395,7 +385,7 @@ class _Checkout {
 	
 			if (!$this->db->execute()) {
 				return [
-					'status' => 0,
+					'status' => 3,
 					'id' => null
 				];
 			}
@@ -429,12 +419,12 @@ class _Checkout {
 
 		if ($this->db->execute($vs)) {
 			return [
-				'status' => 1,
+				'status' => 0,
 				'id' => $inv
 			];
 		} else {
 			return [
-				'status' => 0,
+				'status' => 4,
 				'id' => $inv
 			];
 		}

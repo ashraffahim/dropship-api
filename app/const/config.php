@@ -26,7 +26,7 @@ define('SALES_EMAIL', 'sales@alghaim.com');
 define('TECH_EMAIL', 'support@alghaim.com');
 
 // Server
-define('SMTP', 'mail.alghaim.com');
+define('SMTP', 'mail.grap.store');
 define('SMTP_PORT', '2525');
 
 ?>
