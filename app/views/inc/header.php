@@ -33,40 +33,6 @@
 						<a href="/" style="display: inline-block;height: 34px;width: 34px;background-image: url(<?php echo LOGO; ?>);background-size: cover;">
 						</a>
 					</div>
-					<div class="col-md-4 col-10">
-						<form enctype="xxx-http-urlencode" action="search" class="d-flex">
-							<div class="input-group head-search">
-								<input type="search" name="q" placeholder="Search" class="form-control border-0 bg-light">
-								<div class="input-group-append">
-									<button class="btn bg-light text-muted"><i class="fa fa-search"></i></button>
-								</div>
-							</div>
-						</form>
-					</div>
-					<div class="col-md-2 mt-md-0 mt-3">
-						<div class="row justify-content-end">
-							<div class="col-auto">
-								<a href="/cart" class="btn btn-outline-secondary cart-btn"><i class="fal fa-shopping-bag"></i> <span class="badge badge-secondary ff2" style="display: none"></span></a>
-							</div>
-							<div class="col-auto">
-								<div class="dropdown">
-									<button class="btn" data-toggle="dropdown"><i class="fal fa-user"></i></button>
-									<div class="dropdown-menu dropdown-menu-right">
-									<?php
-									if (isset($_SESSION['u'])) {
-									?>
-										<a href="/account/transaction" class="dropdown-item">Profile</a>
-									<?php
-									} else {
-									?>
-										<a href="/login" class="dropdown-item">Login</a>
-										<a href="/signup" class="dropdown-item">Sign up</a>
-									<?php } ?>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
 				</div>
 			</div>
 		</nav>

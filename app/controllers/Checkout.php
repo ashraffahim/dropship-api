@@ -10,6 +10,10 @@ class Checkout extends Controller {
 	private $c;
 	
 	function __construct() {
+		if (!isset($_SESSION['u'])) {
+			redir('/login');
+			exit;
+		}
 		$this->c = new _Checkout();
 	}
 

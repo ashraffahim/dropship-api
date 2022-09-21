@@ -12,7 +12,7 @@ define('ROW_LIMIT', 20);
 
 // Software
 define('DS', DIRECTORY_SEPARATOR);
-define('DOMAIN', 'http://menu');
+define('DOMAIN', 'dropship');
 define('BASEDIR', '');
 define('DATA', 'http://dropship-ftp');
 define('DATADIR', '..'.DS.'..'.DS.'dropship-seller'.DS.'data');
